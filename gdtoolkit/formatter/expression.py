@@ -248,12 +248,19 @@ def _format_kv_pair_to_multiple_lines(
     key_lines = _format_standalone_expression(
         expression.children[0], key_expression_context, context
     )
+    kv_prefix_line = -1
+    for line, _ in reversed(key_lines):
+        if line is not None and line >= 0:
+            kv_prefix_line = line
     value_expression_context = ExpressionContext(
-        "", -1, expression_context.suffix_string, expression_context.suffix_line
+        "", kv_prefix_line, expression_context.suffix_string, expression_context.suffix_line
     )
     value_lines = _format_standalone_expression(
         expression.children[1], value_expression_context, context
     )
+    if value_lines[0][1].lstrip().startswith("(func("):
+        key_lines[-1] = (key_lines[-1][0], key_lines[-1][1] + " " + value_lines[0][1].lstrip())
+        value_lines = value_lines[1:]
     return key_lines + value_lines
 
 
@@ -804,7 +811,7 @@ def _format_lambda_to_multiple_lines(
     )
     last_block_line_number, last_block_line_content = block_lines[-1]
 
-    return (
+    formatted_lines = (
         header_lines
         + block_lines[:-1]
         + [
@@ -814,6 +821,11 @@ def _format_lambda_to_multiple_lines(
             )
         ]
     )
+
+    formatted_lines[0] = (formatted_lines[0][0], formatted_lines[0][1].replace("func(", "(func("))
+    formatted_lines[-1] = (formatted_lines[-1][0], formatted_lines[-1][1] + ")")
+
+    return formatted_lines
 
 
 def _format_lambda_header_to_multiple_lines(

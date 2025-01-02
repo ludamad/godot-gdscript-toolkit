@@ -64,12 +64,11 @@ def format_code(
         context,
         GLOBAL_SCOPE_SURROUNDING_EMPTY_LINES_TABLE,
     )
-    formatted_lines.append((None, ""))
     formatted_lines = _add_inline_comments(formatted_lines, context.inline_comments)
     formatted_lines = _add_standalone_comments(
         formatted_lines, context.standalone_comments, context.indent_regex
     )
-    return "\n".join([line for _, line in formatted_lines])
+    return "\n".join([line for _, line in formatted_lines]) + "\n"
 
 
 def _add_inline_comments(

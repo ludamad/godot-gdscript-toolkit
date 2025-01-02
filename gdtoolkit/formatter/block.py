@@ -58,6 +58,7 @@ def format_block(
         if len(context.annotations) > 0:
             lines = prepend_annotations_to_formatted_line(lines[0], context) + lines[1:]
         formatted_lines += lines
+
         previous_statement_name = statement.data
     dedent_line_number = _find_dedent_line_number(
         previously_processed_line_number, context
