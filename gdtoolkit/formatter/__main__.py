@@ -208,23 +208,25 @@ def _check_files_formatting(
             )
             failed_files.add(file_path)
     if len(formattable_files) == 0:
-        print(
-            "{} file{} would be left unchanged".format(
-                len(files), "s" if len(files) != 1 else ""
-            )
-        )
+        # MONMON HACK
+        # print(
+        #     "{} file{} would be left unchanged".format(
+        #         len(files), "s" if len(files) != 1 else ""
+        #     )
+        # )
         sys.exit(0 if len(failed_files) == 0 else 1)
-    formattable_num = len(formattable_files)
-    left_unchanged_num = len(files) - formattable_num
-    print(
-        "{} file{} would be reformatted, {} file{} would be left unchanged.".format(
-            formattable_num,
-            "s" if formattable_num != 1 else "",
-            left_unchanged_num,
-            "s" if left_unchanged_num != 1 else "",
-        ),
-        file=sys.stderr,
-    )
+    # MONMON HACK
+    # formattable_num = len(formattable_files)
+    # left_unchanged_num = len(files) - formattable_num
+    # print(
+    #     "{} file{} would be reformatted, {} file{} would be left unchanged.".format(
+    #         formattable_num,
+    #         "s" if formattable_num != 1 else "",
+    #         left_unchanged_num,
+    #         "s" if left_unchanged_num != 1 else "",
+    #     ),
+    #     file=sys.stderr,
+    # )
     sys.exit(1)
 
 
