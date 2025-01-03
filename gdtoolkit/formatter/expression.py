@@ -821,7 +821,7 @@ def _format_lambda_to_multiple_lines(
         + [
             (
                 last_block_line_number,
-                f"{last_block_line_content}{")" + expression_context.suffix_string}",
+                f"{last_block_line_content}{')' + expression_context.suffix_string}",
             )
         ]
     )
