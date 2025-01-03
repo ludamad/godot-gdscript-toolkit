@@ -318,7 +318,7 @@ def _format_code(
         success = False
         error_message = lark_unexpected_input_to_str(exception)
         print(
-            f"{file_path}:{_extract_line_suffix(error_message)}\n",
+            f"{file_path}{_extract_line_suffix(error_message)}\n",
             error_message,
             sep="\n",
             file=sys.stderr,
@@ -327,7 +327,7 @@ def _format_code(
         success = False
         error_message = str(exception)
         print(
-            f"{file_path}:{_extract_line_suffix(error_message)}\n",
+            f"{file_path}{_extract_line_suffix(error_message)}\n",
             error_message,
             sep="\n",
             file=sys.stderr,
