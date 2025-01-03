@@ -66,13 +66,13 @@ def _unnecessary_pass_check(parse_tree: Tree) -> List[Problem]:
 # MONMON EDIT
 def _var_statement_untyped(parse_tree: Tree) -> List[Problem]:
     problems = []
-    for stmt in parse_tree.find_pred(lambda t: t.data in ("class_var_stmt", "class_var_empty", "func_var_stmt", "func_var_empty")):
+    for stmt in parse_tree.find_pred(lambda t: t.data in ("class_var_assigned", "class_var_empty", "func_var_assigned", "func_var_empty")):
         # Conveniently, the pro
         problems.append(
             Problem(
                 name="var-statement-untyped",
                 description=(
-                    "all var statements should have either an inferred type with := or a set type e.g. var x: bool = ..."
+                    "Use 'var " + stmt.children[0].value + " :=' or an explicit type."
                 ),
                 line=get_line(stmt),
                 column=get_column(stmt),
