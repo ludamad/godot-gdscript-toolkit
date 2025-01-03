@@ -27,6 +27,7 @@ Examples:
 """
 import sys
 import os
+import re
 import logging
 import pathlib
 import difflib
@@ -102,6 +103,13 @@ def _dump_default_config() -> None:
     with open(CONFIG_FILE_NAME, "w", encoding="utf-8") as handle:
         handle.write(yaml.dump(DEFAULT_CONFIG.copy()))
     sys.exit(0)
+
+
+def _extract_line_suffix(error_message: str) -> str:
+    match = re.search(r"at line (\d+)", error_message)
+    if match:
+        return ":" + match.group(1)
+    return ""
 
 
 def _find_config_file() -> Optional[str]:
@@ -297,27 +305,30 @@ def _format_code(
                 )
     except lark.exceptions.UnexpectedToken as exception:
         success = False
+        error_message = lark_unexpected_token_to_str(
+            exception, formatted_code if actually_formatted else code
+        )
         print(
-            f"{file_path}:\n",
-            lark_unexpected_token_to_str(
-                exception, formatted_code if actually_formatted else code
-            ),
+            f"{file_path}{_extract_line_suffix(error_message)}\n",
+            error_message,
             sep="\n",
             file=sys.stderr,
         )
     except lark.exceptions.UnexpectedInput as exception:
         success = False
+        error_message = lark_unexpected_input_to_str(exception)
         print(
-            f"{file_path}:\n",
-            lark_unexpected_input_to_str(exception),
+            f"{file_path}:{_extract_line_suffix(error_message)}\n",
+            error_message,
             sep="\n",
             file=sys.stderr,
         )
     except lark.indenter.DedentError as exception:
         success = False
+        error_message = str(exception)
         print(
-            f"{file_path}:\n",
-            str(exception),
+            f"{file_path}:{_extract_line_suffix(error_message)}\n",
+            error_message,
             sep="\n",
             file=sys.stderr,
         )
