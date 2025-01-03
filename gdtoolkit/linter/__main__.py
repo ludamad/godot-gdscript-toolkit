@@ -74,7 +74,8 @@ def main():
         )
         sys.exit(1)
 
-    print("Success: no problems found")
+    # MONMON EDIT we want quiet
+    # print("Success: no problems found")
 
 
 def _dump_default_config() -> None:
