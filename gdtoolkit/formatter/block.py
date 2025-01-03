@@ -4,7 +4,7 @@ from typing import List, Callable
 
 from lark import Tree
 
-from ..common.utils import get_line
+from ..common.utils import get_line, get_end_line
 from .types import Outcome, FormattedLines
 from .context import Context
 from .constants import (
@@ -22,6 +22,7 @@ def format_block(
     statement_formatter: Callable,
     context: Context,
     surrounding_empty_lines_table: MappingProxyType = DEFAULT_SURROUNDINGS_TABLE,
+    dont_scan_for_dedent: bool = False
 ) -> Outcome:
     previous_statement_name = None
     formatted_lines = []  # type: FormattedLines
@@ -60,9 +61,12 @@ def format_block(
         formatted_lines += lines
 
         previous_statement_name = statement.data
-    dedent_line_number = _find_dedent_line_number(
-        previously_processed_line_number, context
-    )
+    if dont_scan_for_dedent:
+        dedent_line_number = get_end_line(statements[-1]) + 1
+    else:
+        dedent_line_number = _find_dedent_line_number(
+            previously_processed_line_number, context
+        )
     lines_at_the_end = reconstruct_blank_lines_in_range(
         previously_processed_line_number, dedent_line_number, context
     )
