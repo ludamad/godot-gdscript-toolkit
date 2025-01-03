@@ -257,17 +257,17 @@ def _format_files(
                 file=sys.stderr,
             )
             failed_files.add(file_path)
-    reformatted_num = len(formatted_files)
-    left_unchanged_num = len(files) - reformatted_num
-    if len(files) != 1:
-        print(
-            "{} file{} reformatted, {} file{} left unchanged.".format(
-                reformatted_num,
-                "s" if reformatted_num != 1 else "",
-                left_unchanged_num,
-                "s" if left_unchanged_num != 1 else "",
-            )
-        )
+    # reformatted_num = len(formatted_files)
+    # left_unchanged_num = len(files) - reformatted_num
+    # MONMON edit: we don't care to see this while doing things in parallel
+    # print(
+    #     "{} file{} reformatted, {} file{} left unchanged.".format(
+    #         reformatted_num,
+    #         "s" if reformatted_num != 1 else "",
+    #         left_unchanged_num,
+    #         "s" if left_unchanged_num != 1 else "",
+    #     )
+    # )
     sys.exit(0 if len(failed_files) == 0 else 1)
 
 
