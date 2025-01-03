@@ -443,6 +443,16 @@ def _format_subscription_to_multiple_lines(
 def _format_operator_chain_based_expression_to_multiple_lines(
     expression: Tree, expression_context: ExpressionContext, context: Context
 ) -> FormattedLines:
+    # Utility expression for format utility
+    fake_meta = Meta()
+    fake_meta.line = expression_context.prefix_line
+    fake_meta.end_line = expression_context.suffix_line
+    fake_expression = Tree(
+        "contextless_operator_chain_based_expression", expression.children, fake_meta
+    )
+    # MON MON hack: dont wrap in parens if a func call
+    if isinstance(expression.children[-1], Tree) and expression.children[-1].data == 'actual_getattr_call':
+        return _format_contextless_operator_chain_based_expression_to_multiple_lines(fake_expression, expression_context, context)
     inside_par = (
         expression_context.prefix_string.endswith("(")
         and expression_context.suffix_string.startswith(")")
@@ -458,12 +468,6 @@ def _format_operator_chain_based_expression_to_multiple_lines(
         expression_context.prefix_line,
         "",
         expression_context.suffix_line,
-    )
-    fake_meta = Meta()
-    fake_meta.line = expression_context.prefix_line
-    fake_meta.end_line = expression_context.suffix_line
-    fake_expression = Tree(
-        "contextless_operator_chain_based_expression", expression.children, fake_meta
     )
     formatted_lines = [
         (
@@ -498,16 +502,25 @@ def _format_contextless_operator_chain_based_expression_to_multiple_lines(
     formatted_lines += lines
     operator_expr_chain = zip(expression.children[1::2], expression.children[2::2])
     for operator, child in operator_expr_chain:
+        op = expression_to_str(operator)
+        if not op.startswith("."):
+            op += " "
         lines = _format_concrete_expression(
             child,
             ExpressionContext(
-                f"{expression_to_str(operator)} ",
+                op,
                 get_line(child),
                 "",
                 get_end_line(child),
             ),
             context,
         )
+        # MONMON EDIT
+        # technically has edge cases, but we shouldn't be splitting dot-operator line up so should be ok
+        if lines and lines[0][1].lstrip().startswith('.'):
+            line_num, line_str = lines[0]
+            del lines[0]
+            formatted_lines[-1] = (line_num, formatted_lines[0][1] + line_str.lstrip())
         formatted_lines += lines
     return formatted_lines
 
