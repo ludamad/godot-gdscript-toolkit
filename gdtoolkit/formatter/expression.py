@@ -248,10 +248,11 @@ def _format_kv_pair_to_multiple_lines(
     key_lines = _format_standalone_expression(
         expression.children[0], key_expression_context, context
     )
-    kv_prefix_line = -1
+    kv_prefix_line = expression_context.prefix_line
     for line, _ in reversed(key_lines):
         if line is not None and line >= 0:
             kv_prefix_line = line
+            break
     value_expression_context = ExpressionContext(
         "", kv_prefix_line, expression_context.suffix_string, expression_context.suffix_line
     )
