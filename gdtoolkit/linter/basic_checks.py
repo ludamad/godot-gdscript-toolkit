@@ -32,6 +32,10 @@ def lint(parse_tree: Tree, config: MappingProxyType) -> List[Problem]:
             "comparison-with-itself",
             _comparison_with_itself_check,
         ),
+        (
+            "var-statement-untyped",
+            _var_statement_untyped,
+        ),
     ]
     problem_clusters = (
         x[1](parse_tree) if x[0] not in disable else [] for x in checks_to_run_w_tree
@@ -57,6 +61,25 @@ def _unnecessary_pass_check(parse_tree: Tree) -> List[Problem]:
                         )
                     )
     return problems
+
+
+# MONMON EDIT
+def _var_statement_untyped(parse_tree: Tree) -> List[Problem]:
+    problems = []
+    for stmt in parse_tree.find_pred(lambda t: t.data in ("class_var_stmt", "class_var_empty", "func_var_stmt", "func_var_empty")):
+        # Conveniently, the pro
+        problems.append(
+            Problem(
+                name="var-statement-untyped",
+                description=(
+                    "all var statements should have either an inferred type with := or a set type e.g. var x: bool = ..."
+                ),
+                line=get_line(stmt),
+                column=get_column(stmt),
+            )
+        )
+    return problems
+# ENDMONMON EDIT
 
 
 def _expression_not_assigned_check(parse_tree: Tree) -> List[Problem]:

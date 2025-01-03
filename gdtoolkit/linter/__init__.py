@@ -45,6 +45,7 @@ DEFAULT_CONFIG = MappingProxyType(
         # basic checks
         "duplicated-load": None,
         "expression-not-assigned": None,
+        "var-statement-untyped": None,
         "unnecessary-pass": None,
         "unused-argument": None,
         "comparison-with-itself": None,
