@@ -105,8 +105,7 @@ def _format_match_branch(statement: Tree, context: Context) -> Outcome:
     prefix = ""
     suffix = ":"
     expr_position = 0
-    # MONMON HACK we pass true as dedent finding did not work with match indents
-    return _format_branch(prefix, suffix, expr_position, statement, context, True)
+    return _format_branch(prefix, suffix, expr_position, statement, context)
 
 
 def _format_guarded_match_branch(statement: Tree, context: Context) -> Outcome:
@@ -146,8 +145,6 @@ def _format_branch(
     body_lines, last_processed_line_no = format_block(
         statement.children[offset:],
         format_func_statement,
-        context.create_child_context(last_processed_line_no),
-        # MONMON HACK we pass true as dedent finding did not work with match indents
-        dont_scan_for_dedent=True
+        context.create_child_context(last_processed_line_no)
     )
     return (header_lines + body_lines, last_processed_line_no)
