@@ -17,6 +17,13 @@ def standalone_expression_to_str(expression: Node) -> str:
     return expression_to_str(expression)
 
 
+def _par_expr_to_str(expression: Node) -> str:
+    result = standalone_expression_to_str(expression)
+    if result.startswith("(") and result.endswith(")"):
+        return result
+    return "(" + result + ")"
+
+
 def expression_to_str(expression: Node) -> str:
     if isinstance(expression, Token):
         token_handlers = {
@@ -74,7 +81,7 @@ def expression_to_str(expression: Node) -> str:
         "getattr_call": _getattr_call_to_str,
         "getattr": lambda e: "".join(map(expression_to_str, e.children)),
         "subscr_expr": _subscription_to_str,
-        "par_expr": lambda e: f"({standalone_expression_to_str(e.children[0])})",
+        "par_expr": _par_expr_to_str,
         "array": _array_to_str,
         "dict": _dict_to_str,
         "c_dict_element": _dict_element_to_str,
@@ -223,10 +230,12 @@ def _annotation_args_to_str(annotation: Tree) -> str:
 
 def _lambda_to_str(a_lambda: Tree) -> str:
     assert len(a_lambda.children) == 2
-    return "{} {}".format(
+    result = "{} {}".format(
         expression_to_str(a_lambda.children[0]),
         function_statement_to_str(a_lambda.children[1]),
     )
+    # MONMON EDIT we like lambdas always in parentheses
+    return "(" + result + ")"
 
 
 def _lambda_header_to_str(lambda_header: Tree) -> str:

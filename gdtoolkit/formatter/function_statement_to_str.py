@@ -12,7 +12,7 @@ def function_statement_to_str(statement: Tree) -> str:
         "func_var_stmt": lambda s: function_statement_to_str(s.children[0]),
         "const_stmt": lambda s: function_statement_to_str(s.children[0]),
         "expr_stmt": lambda s: expression_to_str(s.children[0]),  # TODO: standalone?
-        "return_stmt": lambda s: f"return {standalone_expression_to_str(s.children[0])}",
+        "return_stmt": lambda s: f"return {standalone_expression_to_str(s.children[0])}" if len(s.children) > 0 else "return",
         "break_stmt": _not_implemented,
         "breakpoint_stmt": lambda _: "breakpoint",
         "continue_stmt": _not_implemented,

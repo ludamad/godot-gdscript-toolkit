@@ -273,6 +273,10 @@ def _format_parentheses_to_multiple_lines(
         f"){expression_context.suffix_string}",
         get_end_line(par_expr),
     )
+    if len(par_expr.children) == 1 and par_expr.children[0].data in ('lambda', 'par_expr'):
+        # MONMON EDIT these both already add parens, don't be redundant
+        new_expression_context = expression_context
+
     return _format_standalone_expression(
         par_expr.children[0],
         new_expression_context,
@@ -817,13 +821,13 @@ def _format_lambda_to_multiple_lines(
         + [
             (
                 last_block_line_number,
-                f"{last_block_line_content}{expression_context.suffix_string}",
+                f"{last_block_line_content}{")" + expression_context.suffix_string}",
             )
         ]
     )
 
     formatted_lines[0] = (formatted_lines[0][0], formatted_lines[0][1].replace("func(", "(func("))
-    formatted_lines[-1] = (formatted_lines[-1][0], formatted_lines[-1][1] + ")")
+    formatted_lines[-1] = (formatted_lines[-1][0], formatted_lines[-1][1])
 
     return formatted_lines
 
